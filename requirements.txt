@@ -1,0 +1,23 @@
+# Core Dependencies
+python-telegram-bot>=20.0
+google-generativeai>=0.3.0
+google-cloud-aiplatform>=1.125.0
+loguru>=0.7.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+apscheduler>=3.10.0
+
+# Google Cloud
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
+google-cloud-storage>=3.0.0
+
+# API Integrations (Optional)
+google-api-python-client>=2.100.0  # Google Calendar
+spotipy>=2.23.0                     # Spotify
+
+# Utilities
+requests>=2.31.0
+httpx>=0.25.0
+aiohttp>=3.9.0
