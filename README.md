@@ -1,132 +1,49 @@
-# Mental Wellness AI Agent
+# Psych Buddy
 
-A compassionate, multi-agent AI system providing personalized mental wellness support through Telegram.
+**A compassionate, empathetic AI companion for mental wellness.**
 
-## 🌟 Features
+## About the Project
 
-- **Intelligent Analysis**: Deep emotional understanding using Gemini 2.0 Flash Thinking
-- **Empathetic Communication**: Warm, supportive messaging via Gemini 2.0 Flash
-- **Daily Check-ins**: 4 automated wellness check-ins per day
-- **Personalized Plans**: 7-day therapeutic programs tailored to your needs
-- **Crisis Detection**: Immediate intervention with emergency resources
-- **Calendar Integration**: Automatic scheduling of wellness activities
-- **Music Therapy**: Curated Spotify playlists for emotional regulation
-- **Progress Tracking**: Continuous monitoring and plan adjustments
+**Psych Buddy** is a supportive and empathetic chatbot designed for individuals who are feeling lonely, depressed, or simply in need of someone to talk to. Conceived and built with the core objective of providing affectionate, non-judgmental companionship, Psych Buddy acts as a supportive friend who is always there to listen. 
 
-## 🏗️ Architecture
+When you share your feelings, Psych Buddy responds with warmth and understanding, guiding you through difficult times. It takes proactive, empathetic steps to help improve your mental well-being, such as recommending light exercise, suggesting uplifting music, and helping you track your mental wellness journey over a period of several days.
 
-**Multi-Agent System**:
-- **Analysis Agent**: Emotional analysis, wellness planning, resource coordination
-- **Messaging Agent**: Communication, check-ins, crisis detection
-- **Orchestrator**: Coordinates seamless agent collaboration
+## Our Objective
 
-**Technology Stack**:
-- Google Gemini 2.0 (Flash Thinking + Flash)
-- Google Vertex AI Memory Store
-- Telegram Bot API
-- Google Calendar API (optional)
-- Spotify API (optional)
+The primary goal of Psych Buddy is to ensure that no one feels alone in their struggles. For anyone dealing with loneliness or depression, having a consistent, affectionate presence can make a significant difference. Psych Buddy is built to be that presence - a gentle companion that not only listens but also encourages positive daily habits like movement, music, and mindfulness to help you navigate through your emotions.
 
-## 🚀 Quick Start
+## Key Features
 
-### Prerequisites
-- Python 3.10+
-- Google Cloud Account
-- Telegram Bot Token
-- Google AI API Key
+- **Empathetic Companionship**: A warm, supportive space to share how you're feeling without judgment.
+- **Personalized Wellness Steps**: Gentle encouragement to engage in mood-boosting activities like exercising or listening to good music.
+- **Continuous Support**: Daily check-ins to see how you're doing and to track your mental wellness over time.
+- **Crisis Recognition**: Built-in safety measures to recognize when you might be in distress and provide necessary emergency resources.
 
-### Installation
+## Architecture Overview
 
-```powershell
-# 1. Install dependencies
-pip install -r requirements.txt
+Psych Buddy is powered by a robust and modular technical architecture designed to ensure seamless and intelligent interactions:
 
-# 2. Set up configuration
-Copy-Item .env.example .env
-# Edit .env with your API keys
+- **Multi-Agent System**: The core logic is distributed across specialized AI agents, orchestrated to work collaboratively for deeper emotional understanding and response generation.
+- **Memory Management**: The system employs a sophisticated memory approach, allowing the bot to recall past interactions and track your wellness journey over time without losing context.
+- **Database Storage**: User data, session history, and wellness tracking metrics are securely stored and managed using PostgreSQL.
+- **Docker Integration**: The application and its database dependencies are containerized using Docker to ensure reliable and consistent deployment.
+- **Model Context Protocol (MCP)**: The system utilizes MCP to seamlessly integrate various external tools, enabling the bot to access resources, schedule activities, or curate music safely.
 
-# 3. Set up Google Cloud
-# - Create project
-# - Enable Vertex AI API
-# - Create service account
-# - Download service-account.json
+## How to Get Started
 
-# 4. Run the system
-python main.py
-```
+1. **Find Psych Buddy on Telegram**
+2. **Send /start** to begin the conversation.
+3. **Share your feelings** honestly and openly.
+4. Let Psych Buddy guide you through personalized wellness steps and experience compassionate support!
 
-## 📖 Documentation
+## Disclaimer
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete system architecture and getting started guide
-- **[.env.example](.env.example)** - Configuration template
+Psych Buddy is a supportive wellness companion and is **NOT** a replacement for professional mental health care or therapy. 
 
-## 🧪 Testing
-
-1. Find your bot on Telegram
-2. Send `/start`
-3. Share how you're feeling
-4. Experience personalized support!
-
-## 🔒 Safety
-
-- **Crisis Detection**: Automatic identification of high-risk situations
-- **Emergency Resources**: Immediate access to 988, Crisis Text Line, etc.
-- **Privacy**: 30-day data retention, encrypted storage
-- **Boundaries**: Clear disclaimers about professional therapy
-
-## ⚠️ Disclaimer
-
-This is a supportive wellness tool, **NOT** a replacement for professional mental health care. 
-
-**In crisis, contact**:
-- 988 (Suicide & Crisis Lifeline)
+**If you are in crisis, please contact:**
+- 988 (Suicide and Crisis Lifeline)
 - Crisis Text Line: Text HOME to 741741
 - Emergency Services: 911
 
-## 📊 Supported Mental States
-
-Sadness • Loneliness • Anxiety • Anger • Grief • Stress • Depression • Overwhelm • Fear • Hopelessness
-
-Each with 4 intensity levels and personalized coping strategies.
-
-## 🛠️ Customization
-
-- Modify check-in times in `.env`
-- Adjust program duration (default 7 days)
-- Add custom mental states
-- Extend coping strategies database
-
-## 📈 What Happens Behind the Scenes
-
-1. **User shares feelings** → Analysis Agent evaluates condition
-2. **Agent generates plan** → 7-day personalized program
-3. **Calendar scheduling** → Tasks automatically added
-4. **Music curation** → Therapeutic playlists suggested
-5. **Daily check-ins** → 4 times/day progress monitoring
-6. **Crisis monitoring** → Continuous safety surveillance
-7. **Progress tracking** → Plan adjustments based on data
-
-## 🎯 Use Cases
-
-- **Breakup Recovery**: Coping with relationship loss
-- **Loneliness**: Building social connections
-- **Work Stress**: Managing overwhelm and burnout
-- **Grief Support**: Processing loss
-- **Anxiety Management**: Daily grounding techniques
-- **Depression Support**: Encouraging small wins
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 💙 Support Mental Health
-
-Remember:
-- You are not alone
-- Seeking help is strength
-- Recovery is possible
-- Professional support is available
-
 ---
-
-**Built with compassion for mental wellness** 🌸
+*Built with compassion for mental wellness.*

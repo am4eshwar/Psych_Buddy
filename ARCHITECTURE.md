@@ -20,8 +20,7 @@ This system implements a **2-agent collaborative architecture** where specialize
             ▼                         ▼
 ┌───────────────────────┐  ┌─────────────────────────────────┐
 │   ANALYSIS AGENT      │  │    MESSAGING AGENT              │
-│ (Gemini 2.0 Flash     │  │  (Gemini 2.0 Flash)             │
-│      Thinking)        │  │                                 │
+│  (Gemini 2.5 Flash)   │  │   (Gemini 2.5 Flash)            │
 ├───────────────────────┤  ├─────────────────────────────────┤
 │ Responsibilities:     │  │ Responsibilities:               │
 │ • Emotional Analysis  │  │ • User Communication            │
@@ -38,7 +37,7 @@ This system implements a **2-agent collaborative architecture** where specialize
         ┌────────────────────────────┐
         │  SHARED RESOURCES          │
         ├────────────────────────────┤
-        │ • Vertex AI Memory Store   │
+        │ • Triple-Layer Memory Arch.│
         │ • Telegram MCP Server      │
         │ • Google Calendar Server   │
         │ • Spotify Server           │
@@ -49,7 +48,7 @@ This system implements a **2-agent collaborative architecture** where specialize
 ### Agent Specialization
 
 #### 1️⃣ Analysis Agent
-**Model**: Gemini 2.0 Flash Thinking (Deep reasoning)
+**Model**: Gemini 2.5 Flash
 
 **Core Functions**:
 - **Emotional Analysis**: Identifies primary and secondary mental states (sadness, anxiety, loneliness, etc.)
@@ -83,7 +82,7 @@ This system implements a **2-agent collaborative architecture** where specialize
 ```
 
 #### 2️⃣ Messaging Agent
-**Model**: Gemini 2.0 Flash (Fast, empathetic communication)
+**Model**: Gemini 2.5 Flash
 
 **Core Functions**:
 - **Initial Report Delivery**: Communicates analysis results warmly and clearly
@@ -149,9 +148,13 @@ Messaging Agent: "Thanks for sharing. A 4/10 is understandable given
 ## 🛠️ Technology Stack
 
 ### AI/ML
-- **Google Gemini 2.0 Flash Thinking**: Analysis Agent (deep reasoning)
-- **Google Gemini 2.0 Flash**: Messaging Agent (fast responses)
-- **Google Vertex AI**: Memory storage and RAG-based retrieval
+- **Google Gemini 2.5 Flash**: Analysis Agent & Messaging Agent
+- **Mem0 (Qdrant)**: Episodic memory and RAG-based retrieval
+
+### Memory & Persistence (Triple-Layer Architecture)
+- **Redis**: High-speed short-term session state tracking.
+- **PostgreSQL**: Long-term structured persistence (Sessions, Wellness Tasks, Check-ins) via Asyncpg.
+- **Mem0 (Qdrant)**: Semantic episodic memory for unstructured conversation context.
 
 ### Communication
 - **Telegram Bot API**: Primary messaging platform
@@ -164,7 +167,7 @@ Messaging Agent: "Thanks for sharing. A 4/10 is understandable given
 ### Infrastructure
 - **APScheduler**: Task and check-in scheduling
 - **Loguru**: Advanced logging
-- **Pydantic**: Data validation
+- **Pydantic V2**: Robust data schema validation (`model_dump()`)
 
 ---
 
@@ -184,7 +187,8 @@ c:\program zero\
 │   └── mental_states.py           # Mental state definitions
 │
 ├── core/                          # Core system
-│   ├── memory.py                  # Vertex AI memory manager
+│   ├── memory.py                  # Triple-Layer Memory Manager
+│   ├── database.py                # PostgreSQL async connection manager
 │   ├── scheduler.py               # Check-in & task scheduler
 │   │
 │   └── agents/                    # Multi-agent system
@@ -199,9 +203,10 @@ c:\program zero\
 │   ├── calendar_server.py         # Google Calendar
 │   └── spotify_server.py          # Spotify integration
 │
-├── models/                        # Data models
+├── models/                        # Data models (Pydantic V2)
 │   ├── __init__.py
 │   ├── user.py                    # User profiles & sessions
+│   ├── db_models.py               # SQLAlchemy ORM models
 │   └── task.py                    # Wellness tasks
 │
 └── utils/                         # Utilities
@@ -217,7 +222,7 @@ c:\program zero\
 ### Prerequisites
 
 1. **Python 3.10+**
-2. **Google Cloud Account** (for Vertex AI)
+2. **Docker & Docker Compose** (for PostgreSQL and Redis)
 3. **Telegram Bot Token** (from @BotFather)
 4. **Google AI API Key** (from Google AI Studio)
 
@@ -228,29 +233,18 @@ c:\program zero\
 pip install -r requirements.txt
 ```
 
-### Step 2: Set Up Google Cloud
+### Step 2: Set Up Database Infrastructure
 
-1. **Create a Google Cloud Project**:
-   - Go to https://console.cloud.google.com
-   - Create new project: "mental-wellness-agent"
+We use Docker Compose to rapidly spin up the database layer.
 
-2. **Enable Required APIs**:
+1. **Start the containers**:
+   ```powershell
+   docker-compose up -d
    ```
-   - Vertex AI API
-   - Google Calendar API (optional)
-   - Cloud Storage API
-   ```
+   *This starts PostgreSQL, Redis, and Qdrant (Mem0).*
 
-3. **Create Service Account**:
-   - Go to IAM & Admin → Service Accounts
-   - Create service account: "wellness-agent"
-   - Grant roles:
-     - Vertex AI User
-     - Cloud Storage Admin
-   - Create JSON key → Download as `service-account.json`
-
-4. **Set Up Vertex AI Memory**:
-   - The system will auto-create RAG corpus on first run
+2. **Initialize Database**:
+   The system automatically runs `SQLAlchemy` async schemas to initialize your tables on the first run.
 
 ### Step 3: Get API Keys
 
@@ -294,10 +288,9 @@ notepad .env
 GOOGLE_API_KEY=your_google_api_key_from_makersuite
 GEMINI_MODEL=gemini-2.0-flash-thinking-exp
 
-# Google Cloud / Vertex AI
-GOOGLE_PROJECT_ID=your-gcp-project-id
-GOOGLE_LOCATION=us-central1
-GOOGLE_CREDENTIALS_PATH=service-account.json
+# Database Connections
+POSTGRES_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/psych_agent
+REDIS_URL=redis://localhost:6379/0
 
 # Telegram
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token_from_botfather
@@ -360,7 +353,7 @@ Active Components:
   • Telegram Bot
   • Google Calendar: ✓
   • Spotify: ✓
-  • Vertex AI Memory Store
+  • Triple-Layer Memory Manager (Redis+PG+Mem0)
   • Task Scheduler
 
 Press Ctrl+C to stop the system
@@ -527,7 +520,7 @@ International Hotlines provided
 - Third-party data
 
 **Storage**:
-- Google Vertex AI (encrypted at rest)
+- Triple-layer local DB cluster (PostgreSQL, Redis, Qdrant)
 - 30-day retention policy
 - Auto-cleanup of old data
 
