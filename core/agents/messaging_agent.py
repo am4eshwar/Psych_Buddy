@@ -2,13 +2,13 @@
 Messaging Agent - Handles communication, check-ins, and crisis detection
 Uses Gemini 2.0 Flash for fast, empathetic communication
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
 from loguru import logger
 import json
 
 import google.generativeai as genai
-from config import GOOGLE_API_KEY, CHECK_IN_TIMES
+from config import GOOGLE_API_KEY, CHECK_IN_TIMES, GEMINI_MODEL
 from config.mental_states import EMERGENCY_RESOURCES
 from models import UserSession
 from utils.prompts import MESSAGING_PROMPTS
@@ -35,7 +35,7 @@ class MessagingAgent:
         # Configure Gemini 2.0 Flash for fast, empathetic responses
         genai.configure(api_key=GOOGLE_API_KEY)
         self.model = genai.GenerativeModel(
-            model_name='gemini-2.0-flash-exp',
+            model_name=GEMINI_MODEL,
             generation_config={
                 'temperature': 0.9,  # Higher for more empathetic, varied responses
                 'top_p': 0.95,
@@ -60,7 +60,7 @@ class MessagingAgent:
                     "threshold": "BLOCK_NONE"
                 }
             ],
-            system_instruction="""You are a compassionate mental wellness support agent. Your role is to:
+            system_instruction="""You are Psych Buddy, a compassionate mental wellness support agent. Your role is to:
 1. Communicate with empathy, warmth, and understanding
 2. Monitor for crisis situations and respond appropriately
 3. Conduct check-ins in a gentle, non-judgmental way
@@ -110,16 +110,16 @@ class MessagingAgent:
                 message += music_section
             
             # Send via Telegram
-            self.telegram.send_message(user_id, message)
+            await self.telegram.send_message(user_id, message)
             
             # Save to conversation history
-            session = self.memory.get_active_session(user_id)
+            session = await self.memory.get_active_session(user_id)
             if session:
-                self.memory.save_conversation_message(
-                    session.session_id,
+                await self.memory.save_turn(
+                    user_id,
                     'assistant',
                     message,
-                    {'type': 'analysis_report'}
+                    session.session_id
                 )
             
             logger.info(f"Analysis report delivered to user {user_id}")
@@ -150,8 +150,8 @@ class MessagingAgent:
         
         try:
             # Get conversation context
-            recent_history = self.memory.get_conversation_history(
-                session.session_id,
+            recent_history = await self.memory.get_conversation_history(
+                session.user_id,
                 limit=10
             )
             
@@ -169,7 +169,7 @@ class MessagingAgent:
                 day_number=day_number,
                 time_of_day=time_of_day,
                 focus_area=focus,
-                primary_state=session.primary_state,
+                primary_state=session.primary_mental_state,
                 recent_context=json.dumps(recent_history[-3:], indent=2) if recent_history else "First check-in"
             )
             
@@ -178,14 +178,14 @@ class MessagingAgent:
             message = response.text
             
             # Send via Telegram
-            self.telegram.send_message(session.user_id, message)
+            await self.telegram.send_message(session.user_id, message)
             
             # Save to conversation
-            self.memory.save_conversation_message(
-                session.session_id,
+            await self.memory.save_turn(
+                session.user_id,
                 'assistant',
                 message,
-                {'type': 'check_in', 'day': day_number, 'time': time_of_day}
+                session.session_id
             )
             
             logger.info(f"Check-in conducted for session {session.session_id}")
@@ -210,10 +210,11 @@ class MessagingAgent:
         
         try:
             # Save user message
-            self.memory.save_conversation_message(
-                session.session_id,
+            await self.memory.save_turn(
+                session.user_id,
                 'user',
-                user_message
+                user_message,
+                session.session_id
             )
             
             # Check for crisis indicators
@@ -221,15 +222,15 @@ class MessagingAgent:
                 return await self._handle_crisis_situation(session, user_message)
             
             # Get conversation context
-            conversation_history = self.memory.get_conversation_history(
-                session.session_id,
+            conversation_history = await self.memory.get_conversation_history(
+                session.user_id,
                 limit=15
             )
             
             # Build response prompt
             prompt = MESSAGING_PROMPTS['response'].format(
                 user_message=user_message,
-                session_state=session.primary_state,
+                session_state=session.primary_mental_state,
                 intensity=session.intensity,
                 conversation_history=json.dumps(conversation_history, indent=2)
             )
@@ -239,14 +240,14 @@ class MessagingAgent:
             message = response.text
             
             # Send via Telegram
-            self.telegram.send_message(session.user_id, message)
+            await self.telegram.send_message(session.user_id, message)
             
             # Save assistant response
-            self.memory.save_conversation_message(
-                session.session_id,
+            await self.memory.save_turn(
+                session.user_id,
                 'assistant',
                 message,
-                {'type': 'conversation_response'}
+                session.session_id
             )
             
             logger.info(f"Response sent to user {session.user_id}")
@@ -282,14 +283,14 @@ class MessagingAgent:
             message = response.text
             
             # Send via Telegram
-            self.telegram.send_message(session.user_id, message)
+            await self.telegram.send_message(session.user_id, message)
             
             # Save to conversation
-            self.memory.save_conversation_message(
-                session.session_id,
+            await self.memory.save_turn(
+                session.user_id,
                 'assistant',
                 message,
-                {'type': 'task_reminder', 'task_id': task.get('id')}
+                session.session_id
             )
             
             logger.info(f"Task reminder sent to user {session.user_id}")
@@ -326,14 +327,14 @@ class MessagingAgent:
             message = response.text
             
             # Send via Telegram
-            self.telegram.send_message(session.user_id, message)
+            await self.telegram.send_message(session.user_id, message)
             
             # Save to conversation
-            self.memory.save_conversation_message(
-                session.session_id,
+            await self.memory.save_turn(
+                session.user_id,
                 'assistant',
                 message,
-                {'type': 'progress_update'}
+                session.session_id
             )
             
             logger.info(f"Progress update sent to user {session.user_id}")
@@ -381,20 +382,20 @@ These services are:
 I'm here too, but professional crisis support is crucial right now. Would you like me to help you find additional local resources?"""
         
         # Send immediately via Telegram
-        self.telegram.send_message(session.user_id, crisis_message)
+        await self.telegram.send_message(session.user_id, crisis_message)
         
         # Mark session as high-risk
         session.metadata = session.metadata or {}
         session.metadata['crisis_detected'] = True
-        session.metadata['crisis_timestamp'] = datetime.utcnow().isoformat()
-        self.memory.save_session(session)
+        session.metadata['crisis_timestamp'] = datetime.now(timezone.utc).isoformat()
+        await self.memory.save_session(session)
         
         # Save to conversation
-        self.memory.save_conversation_message(
-            session.session_id,
+        await self.memory.save_turn(
+            session.user_id,
             'assistant',
             crisis_message,
-            {'type': 'crisis_intervention', 'severity': 'high'}
+            session.session_id
         )
         
         logger.critical(f"Crisis intervention message sent to user {session.user_id}")

@@ -1,21 +1,31 @@
 # Core Dependencies
 python-telegram-bot>=20.0
 google-generativeai>=0.3.0
-google-cloud-aiplatform>=1.125.0
 loguru>=0.7.0
 pydantic>=2.0.0
 python-dotenv>=1.0.0
 apscheduler>=3.10.0
 
-# Google Cloud
+# Memory Architecture
+mem0ai>=0.1.0                        # Memory extraction, deduplication, semantic memory
+litellm>=1.0.0                       # LLM routing for mem0
+qdrant-client>=1.7.0                 # Vector store backend for Mem0
+sentence-transformers>=2.2.0         # Local embeddings generation
+redis[hiredis]>=5.0.0                # Async session context (short-term memory)
+
+# Database (PostgreSQL)
+sqlalchemy[asyncio]>=2.0.0           # ORM for task/schedule persistence
+asyncpg>=0.29.0                      # Async PostgreSQL driver
+alembic>=1.13.0                      # Database migrations
+
+# Google Cloud (Calendar only)
 google-auth>=2.23.0
 google-auth-oauthlib>=1.1.0
 google-auth-httplib2>=0.1.1
-google-cloud-storage>=3.0.0
 
 # API Integrations (Optional)
-google-api-python-client>=2.100.0  # Google Calendar
-spotipy>=2.23.0                     # Spotify
+google-api-python-client>=2.100.0    # Google Calendar
+spotipy>=2.23.0                      # Spotify
 
 # Utilities
 requests>=2.31.0

@@ -2,7 +2,7 @@
 Google Calendar MCP Server for task scheduling
 """
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -229,7 +229,7 @@ class GoogleCalendarMCPServer:
     def get_upcoming_events(self, max_results: int = 10) -> List[Dict[str, Any]]:
         """Get upcoming calendar events"""
         try:
-            now = datetime.utcnow().isoformat() + 'Z'
+            now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
             
             events_result = self.service.events().list(
                 calendarId='primary',

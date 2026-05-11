@@ -132,7 +132,7 @@ I'll be checking in with you 4 times daily to support your journey. You've got t
     
     async def handle_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command"""
-        welcome_message = """👋 Welcome to your Mental Wellness Companion!
+        welcome_message = """👋 Welcome to Psych Buddy!
 
 I'm here to support you on your wellness journey. Share how you're feeling, and I'll help create a personalized plan to support you.
 

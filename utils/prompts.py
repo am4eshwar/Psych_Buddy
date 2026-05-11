@@ -1,5 +1,5 @@
 """
-AI prompt templates for mental wellness agent
+AI prompt templates for Psych Buddy
 """
 
 
@@ -7,7 +7,7 @@ AI prompt templates for mental wellness agent
 class PromptTemplates:
     """Collection of prompt templates for the AI agent"""
     
-    SYSTEM_PROMPT = """You are a compassionate mental wellness AI companion. Your role is to:
+    SYSTEM_PROMPT = """You are Psych Buddy, a compassionate mental wellness AI companion. Your role is to:
 
 1. LISTEN ACTIVELY: Validate emotions and show empathy
 2. ASSESS CAREFULLY: Identify mental states, intensity, and context
@@ -72,10 +72,12 @@ Provide your analysis in JSON format."""
     WELLNESS_PLAN_PROMPT = """Based on this mental wellness assessment, create a comprehensive 7-day wellness plan:
 
 Assessment:
-- Primary Mental State: {mental_state}
+- Primary Mental State: {primary_state}
+- Secondary States: {secondary_states}
 - Intensity: {intensity}
-- Context: {context}
-- User Demographics: {demographics}
+- Triggers: {triggers}
+- Program Duration: {duration_days} days
+- Recommended Coping Strategies: {coping_strategies}
 
 Create a personalized plan that includes:
 
@@ -126,9 +128,11 @@ Return as detailed JSON structure."""
     CHECK_IN_PROMPT = """You are conducting a {time_of_day} check-in with a user in a {duration_days}-day wellness program.
 
 Current Session Info:
-- Day: {current_day} of {duration_days}
-- Mental State Being Addressed: {mental_state}
-- Previous Check-in Summary: {previous_summary}
+- Day: {day_number}
+- Time: {time_of_day}
+- Focus Area: {focus_area}
+- Primary State: {primary_state}
+- Recent Context: {recent_context}
 
 Check-in Goals:
 1. Assess current mood and energy
@@ -149,9 +153,9 @@ Generate check-in questions now."""
 
     MOOD_TRACKER_PROMPT = """Based on this user's check-in responses, analyze their progress:
 
-Check-in Responses: {responses}
-Previous Mood Scores: {previous_scores}
-Day of Program: {current_day}
+Session Data: {session_data}
+Conversation History: {conversation_history}
+Mood Scores: {mood_scores}
 
 Provide:
 1. Current mood score (1-10 scale)
@@ -182,10 +186,9 @@ Respond with compassion and urgency. Prioritize safety over everything else."""
 
     SPOTIFY_RECOMMENDATION_PROMPT = """Recommend Spotify playlists for:
 
-Mental State: {mental_state}
+Primary State: {primary_state}
 Time of Day: {time_of_day}
-Current Mood: {current_mood}
-Goal: {goal}  # e.g., "relaxation", "motivation", "processing emotions"
+Intensity: {intensity}
 
 Suggest:
 1. 3 specific playlist types
@@ -197,7 +200,7 @@ Format as JSON with playlist names and purposes."""
 
     TASK_GENERATION_PROMPT = """Generate specific wellness tasks for:
 
-Mental State: {mental_state}
+Primary State: {primary_state}
 Day: {day_number} of program
 Time Slots: {time_slots}
 User Preferences: {preferences}
@@ -217,7 +220,7 @@ Return as JSON array of tasks."""
     COMPLETION_SUMMARY_PROMPT = """Generate a completion summary for user who finished {duration_days}-day program:
 
 Session Data:
-- Mental State Addressed: {mental_state}
+- Primary State Addressed: {primary_state}
 - Initial Intensity: {initial_intensity}
 - Final Mood Score: {final_mood}
 - Tasks Completed: {completed_count}/{total_count}
@@ -234,6 +237,16 @@ Create:
 7. Professional help recommendations if applicable
 
 Make it warm, encouraging, and empowering. Acknowledge effort regardless of outcomes."""
+
+    RESPONSE_PROMPT = SYSTEM_PROMPT + """
+
+User Mental State: {session_state} ({intensity} intensity)
+Conversation History:
+{conversation_history}
+
+User's New Message: {user_message}
+
+Provide an empathetic, supportive response that directly addresses their message while keeping their current mental state in mind. Do not sound robotic."""
 
     @classmethod
     def get_prompt(cls, prompt_type: str, **kwargs) -> str:
@@ -298,7 +311,7 @@ MESSAGING_PROMPTS = {
     'system': PromptTemplates.SYSTEM_PROMPT,
     'initial_report': PromptTemplates.SYSTEM_PROMPT,  # Will be customized for initial onboarding
     'check_in': PromptTemplates.CHECK_IN_PROMPT,
-    'response': PromptTemplates.SYSTEM_PROMPT,  # General response handling
+    'response': PromptTemplates.RESPONSE_PROMPT,  # General response handling
     'task_reminder': PromptTemplates.TASK_GENERATION_PROMPT,
     'progress_update': PromptTemplates.MOOD_TRACKER_PROMPT,
     'crisis': PromptTemplates.CRISIS_RESPONSE_PROMPT,

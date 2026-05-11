@@ -2,7 +2,7 @@
 Analysis Agent - Handles emotional analysis, wellness planning, and resource coordination
 Uses Gemini 2.0 Flash Thinking for deep analytical reasoning
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List
 from loguru import logger
 import json
@@ -93,7 +93,7 @@ class AnalysisAgent:
             prompt = ANALYSIS_PROMPTS['initial_analysis'].format(
                 user_input=user_input,
                 available_states=', '.join([state.value for state in MentalState]),
-                user_history=self._get_user_history_summary(user_id)
+                user_history=await self._get_user_history_summary(user_id)
             )
             
             # Generate analysis using Gemini
@@ -119,28 +119,29 @@ class AnalysisAgent:
                 trigger_event=trigger_str,
                 context="Initial Analysis",
                 initial_prompt=user_input,
-                start_date=datetime.utcnow(),
+                start_date=datetime.now(timezone.utc),
                 duration_days=PROGRAM_DURATION_DAYS,
                 is_active=True
             )
             
             # Save session to memory
-            self.memory.save_session(session)
+            await self.memory.save_session(session)
             
             # Save conversation
-            self.memory.save_conversation_message(
-                session.session_id,
+            await self.memory.save_turn(
+                user_id,
                 'user',
-                user_input
+                user_input,
+                session.session_id
             )
             
-            logger.info(f"Analysis complete: {session.primary_state} ({session.intensity})")
+            logger.info(f"Analysis complete: {session.primary_mental_state} ({session.intensity})")
             
             return {
-                'primary_state': session.primary_state,
-                'secondary_states': session.secondary_states,
+                'primary_state': session.primary_mental_state,
+                'secondary_states': session.secondary_mental_states,
                 'intensity': session.intensity,
-                'triggers': session.triggers,
+                'triggers': session.trigger_event,
                 'is_crisis': is_crisis,
                 'risk_level': analysis.get('risk_level', 'low'),
                 'session': session,
@@ -167,16 +168,16 @@ class AnalysisAgent:
         logger.info(f"Generating wellness plan for session {session.session_id}")
         
         try:
-            # Get coping strategies for the mental state
-            strategies = get_coping_strategies(session.primary_state, session.intensity)
+            # Get coping strategies from database
+            strategies = get_coping_strategies(session.primary_mental_state, session.intensity)
             
-            # Build wellness plan prompt
+            # Build prompt
             prompt = ANALYSIS_PROMPTS['wellness_plan'].format(
-                primary_state=session.primary_state,
-                secondary_states=', '.join(session.secondary_states),
+                primary_state=session.primary_mental_state,
+                secondary_states=', '.join([str(s) for s in session.secondary_mental_states]),
                 intensity=session.intensity,
-                triggers=', '.join(session.triggers),
-                duration_days=session.program_duration_days,
+                triggers=session.trigger_event,
+                duration_days=session.duration_days,
                 coping_strategies=json.dumps(strategies, indent=2)
             )
             
@@ -189,7 +190,7 @@ class AnalysisAgent:
             
             # Save plan to session
             session.wellness_plan = plan
-            self.memory.save_session(session)
+            await self.memory.save_session(session)
             
             logger.info(f"Wellness plan generated with {len(plan.get('tasks', []))} tasks")
             
@@ -269,7 +270,7 @@ class AnalysisAgent:
         try:
             # Build music curation prompt
             prompt = ANALYSIS_PROMPTS['music_therapy'].format(
-                primary_state=session.primary_state,
+                primary_state=session.primary_mental_state,
                 intensity=session.intensity,
                 time_of_day='morning'  # Can be dynamic
             )
@@ -315,11 +316,12 @@ class AnalysisAgent:
         
         try:
             # Get conversation history
-            history = self.memory.get_conversation_history(session.session_id)
-            
+            history = await self.memory.get_conversation_history(
+                session.user_id, limit=20
+            )
             # Build progress analysis prompt
             prompt = ANALYSIS_PROMPTS['progress_analysis'].format(
-                session_data=json.dumps(session.dict(), indent=2),
+                session_data=session.model_dump_json(indent=2),
                 conversation_history=json.dumps(history[-20:], indent=2),
                 mood_scores=session.mood_scores
             )
@@ -352,10 +354,10 @@ class AnalysisAgent:
         
         return has_crisis_keyword or high_risk
     
-    def _get_user_history_summary(self, user_id: str) -> str:
+    async def _get_user_history_summary(self, user_id: str) -> str:
         """Get summary of user's previous sessions"""
         try:
-            sessions = self.memory.get_user_sessions(user_id)
+            sessions = await self.memory.get_user_sessions(user_id)
             if not sessions:
                 return "No previous history"
             

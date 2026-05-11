@@ -1,5 +1,5 @@
 """
-Configuration settings for Mental Wellness AI Agent
+Configuration settings for Psych Buddy
 """
 from enum import Enum
 from typing import List, Dict

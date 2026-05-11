@@ -70,10 +70,6 @@ class WellnessTask(BaseModel):
     # Additional metadata
     metadata: Dict[str, Any] = {}
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
 
 
 class CheckInPrompt(BaseModel):
@@ -101,7 +97,3 @@ class CheckInPrompt(BaseModel):
     
     status: TaskStatus = TaskStatus.PENDING
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }

@@ -10,13 +10,13 @@ import uuid
 
 from config import CHECK_IN_TIMES
 from models import UserSession, WellnessTask, TaskType, TaskStatus
-from core.memory import VertexMemoryManager
+from core.memory import MemoryManager
 
 
 class WellnessScheduler:
     """Manages scheduling of check-ins and wellness tasks"""
     
-    def __init__(self, memory_manager: VertexMemoryManager):
+    def __init__(self, memory_manager: MemoryManager):
         """Initialize scheduler"""
         self.scheduler = BackgroundScheduler()
         self.memory = memory_manager

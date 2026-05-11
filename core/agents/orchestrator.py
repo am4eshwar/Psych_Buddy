@@ -52,10 +52,10 @@ class AgentOrchestrator:
         
         try:
             # Step 1: Get or create user profile
-            user_profile = self.memory.get_user_profile(user_id)
+            user_profile = await self.memory.get_user_profile(user_id)
             if not user_profile:
                 user_profile = UserProfile(user_id=user_id)
-                self.memory.save_user_profile(user_profile)
+                await self.memory.save_user_profile(user_profile)
             
             # Step 2: Analysis Agent analyzes the input
             logger.info("→ Analysis Agent: Analyzing user condition...")
@@ -140,7 +140,7 @@ class AgentOrchestrator:
         
         try:
             # Get session
-            session = self.memory.get_session(session_id)
+            session = await self.memory.get_session(session_id)
             if not session:
                 logger.error(f"Session {session_id} not found")
                 return
@@ -174,7 +174,7 @@ class AgentOrchestrator:
         
         try:
             # Get active session
-            session = self.memory.get_active_session(user_id)
+            session = await self.memory.get_active_session(user_id)
             if not session:
                 logger.warning(f"No active session for user {user_id}")
                 return "I don't have an active session for you. Please type /start to begin."
@@ -215,7 +215,7 @@ class AgentOrchestrator:
         
         try:
             # Get session
-            session = self.memory.get_session(session_id)
+            session = await self.memory.get_session(session_id)
             if not session:
                 return
             

@@ -1,7 +1,7 @@
 """
 User data model
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Dict
 from pydantic import BaseModel, Field
 from config.mental_states import MentalState, IntensityLevel
@@ -16,7 +16,7 @@ class UserProfile(BaseModel):
     telegram_id: Optional[str] = None
     preferred_contact: str = "telegram"  # telegram or whatsapp
     timezone: str = "UTC"
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
 
 class UserSession(BaseModel):
@@ -35,7 +35,7 @@ class UserSession(BaseModel):
     initial_prompt: str
     
     # Session metadata
-    start_date: datetime = Field(default_factory=datetime.utcnow)
+    start_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     end_date: Optional[datetime] = None
     duration_days: int = 7
     
@@ -53,7 +53,4 @@ class UserSession(BaseModel):
     is_active: bool = True
     requires_professional_help: bool = False
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+

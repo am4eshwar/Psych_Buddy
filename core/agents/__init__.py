@@ -1,5 +1,5 @@
 """
-Multi-Agent System for Mental Wellness
+Multi-Agent System for Psych Buddy
 """
 from core.agents.analysis_agent import AnalysisAgent
 from core.agents.messaging_agent import MessagingAgent

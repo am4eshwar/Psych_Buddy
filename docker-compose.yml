@@ -1,0 +1,43 @@
+# Docker Compose for local development infrastructure
+# Usage: docker compose up -d
+
+services:
+  # ── PostgreSQL (Task & schedule persistence) ───────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: psych-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: psych_agent
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # ── Redis (Short-term session context) ─────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: psych-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  # ── Qdrant (Vector store for Mem0) ─────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: psych-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # REST API
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrantdata:/qdrant/storage
+
+volumes:
+  pgdata:
+  redisdata:
+  qdrantdata:
