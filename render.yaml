@@ -1,0 +1,35 @@
+databases:
+  - name: psych-postgres
+    databaseName: psych_agent
+    user: postgres
+    plan: free
+
+services:
+  - type: worker
+    name: psych-buddy
+    env: docker
+    dockerfilePath: Dockerfile
+    autoDeploy: false
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: GEMINI_MODEL
+        value: "gemini-2.5-flash"
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: psych-postgres
+          property: connectionString
+      - key: POSTGRES_SYNC_URL
+        fromDatabase:
+          name: psych-postgres
+          property: connectionString
+      - key: REDIS_URL
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: QDRANT_COLLECTION_NAME
+        value: "wellness_memories"
