@@ -108,8 +108,8 @@ class MentalWellnessApp:
             spotify_server=self.spotify_server,
         )
         logger.info("✓ Agent orchestrator initialized")
-        logger.info("  → Analysis Agent: Ready (Gemini 2.0 Flash Thinking)")
-        logger.info("  → Messaging Agent: Ready (Gemini 2.0 Flash)")
+        logger.info("  → Analysis Agent: Ready (Gemini 2.5 Flash)")
+        logger.info("  → Messaging Agent: Ready (Gemini 2.5 Flash)")
 
         # ── Scheduler ────────────────────────────────────────────
         logger.info("Initializing wellness scheduler...")
@@ -233,12 +233,12 @@ class MentalWellnessApp:
         logger.info("✓ Scheduler running")
 
         logger.info("=" * 70)
-        logger.info("✅ System is now ACTIVE and monitoring for users")
+        logger.info("System is now ACTIVE and monitoring for users")
         logger.info("=" * 70)
         logger.info("")
         logger.info("Active Components:")
-        logger.info("  • Analysis Agent (Gemini 2.0 Flash Thinking)")
-        logger.info("  • Messaging Agent (Gemini 2.0 Flash)")
+        logger.info("  • Analysis Agent (Gemini 2.5 Flash)")
+        logger.info("  • Messaging Agent (Gemini 2.5 Flash)")
         logger.info("  • Telegram Bot")
         logger.info(
             f"  • Google Calendar: {'✓' if self.calendar_server else '✗'}"
@@ -258,7 +258,7 @@ class MentalWellnessApp:
     async def shutdown(self):
         """Gracefully shutdown all components and connections."""
         logger.info("=" * 70)
-        logger.info("🛑 Shutting down Psych Buddy Multi-Agent System")
+        logger.info("Shutting down Psych Buddy Multi-Agent System")
         logger.info("=" * 70)
 
         try:
@@ -278,7 +278,7 @@ class MentalWellnessApp:
             logger.info("✓ Memory connections closed")
 
             logger.info("=" * 70)
-            logger.info("✅ System shutdown complete")
+            logger.info("System shutdown complete")
             logger.info("=" * 70)
 
         except Exception as e:

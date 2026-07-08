@@ -238,6 +238,27 @@ Create:
 
 Make it warm, encouraging, and empowering. Acknowledge effort regardless of outcomes."""
 
+    INITIAL_REPORT_PROMPT = SYSTEM_PROMPT + """
+
+Based on the following analysis, create a warm and customized sympathetic response to the user's initial message.
+
+Primary Mental State: {primary_state}
+Intensity Level: {intensity}
+Wellness Plan Summary: {wellness_summary}
+Check-in Times: {check_in_times}
+Program Duration: {program_duration} days
+
+Please structure your response in this exact order:
+1. Empathy & Validation: Acknowledge their specific problem and mental state with deep sympathy. Make it feel personalized.
+2. Rapport Building Questions: Ask the following questions to help shift their mindset and build a connection:
+   - "Tell me about your day"
+   - "What generally makes you happy?"
+   - "What is your favourite food?"
+   - "What makes you happy such that it makes you do a happy dance?"
+3. The Solution / Wellness Plan: Introduce the customized wellness plan summary we have created for them. Let them know we will be doing a {program_duration}-day program with daily check-ins at {check_in_times} to help them through this.
+
+Keep the tone conversational, very warm, and encouraging. Use emojis appropriately."""
+
     RESPONSE_PROMPT = SYSTEM_PROMPT + """
 
 User Mental State: {session_state} ({intensity} intensity)
@@ -260,7 +281,8 @@ Provide an empathetic, supportive response that directly addresses their message
             "crisis": cls.CRISIS_RESPONSE_PROMPT,
             "spotify": cls.SPOTIFY_RECOMMENDATION_PROMPT,
             "task_generation": cls.TASK_GENERATION_PROMPT,
-            "completion": cls.COMPLETION_SUMMARY_PROMPT
+            "completion": cls.COMPLETION_SUMMARY_PROMPT,
+            "initial_report": cls.INITIAL_REPORT_PROMPT
         }
         
         template = templates.get(prompt_type, "")
@@ -309,7 +331,7 @@ ANALYSIS_PROMPTS = {
 
 MESSAGING_PROMPTS = {
     'system': PromptTemplates.SYSTEM_PROMPT,
-    'initial_report': PromptTemplates.SYSTEM_PROMPT,  # Will be customized for initial onboarding
+    'initial_report': PromptTemplates.INITIAL_REPORT_PROMPT,  # Customized for initial onboarding
     'check_in': PromptTemplates.CHECK_IN_PROMPT,
     'response': PromptTemplates.RESPONSE_PROMPT,  # General response handling
     'task_reminder': PromptTemplates.TASK_GENERATION_PROMPT,

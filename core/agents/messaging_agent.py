@@ -1,6 +1,6 @@
 """
 Messaging Agent - Handles communication, check-ins, and crisis detection
-Uses Gemini 2.0 Flash for fast, empathetic communication
+Uses Gemini 2.5 Flash for fast, empathetic communication
 """
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List
@@ -26,13 +26,13 @@ class MessagingAgent:
     """
     
     def __init__(self, memory_manager, telegram_server):
-        """Initialize Messaging Agent with Gemini 2.0 Flash"""
+        """Initialize Messaging Agent with Gemini 2.5 Flash"""
         logger.info("Initializing Messaging Agent...")
         
         self.memory = memory_manager
         self.telegram = telegram_server
         
-        # Configure Gemini 2.0 Flash for fast, empathetic responses
+        # Configure Gemini 2.5 Flash for fast, empathetic responses
         genai.configure(api_key=GOOGLE_API_KEY)
         self.model = genai.GenerativeModel(
             model_name=GEMINI_MODEL,
@@ -71,7 +71,7 @@ class MessagingAgent:
 8. Always prioritize user safety"""
         )
         
-        logger.info("Messaging Agent initialized with Gemini 2.0 Flash")
+        logger.info("Messaging Agent initialized with Gemini 2.5 Flash")
     
     async def deliver_analysis_report(
         self,

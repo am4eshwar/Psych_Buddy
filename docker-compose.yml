@@ -37,6 +37,25 @@ services:
     volumes:
       - qdrantdata:/qdrant/storage
 
+  # ── Psych Buddy Bot ──────────────────────────────────────────
+  bot:
+    build: .
+    container_name: psych-bot
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+    env_file:
+      - .env
+    environment:
+      # Override local URLs to point to the docker-compose services
+      - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/psych_agent
+      - POSTGRES_SYNC_URL=postgresql://postgres:postgres@postgres:5432/psych_agent
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      
 volumes:
   pgdata:
   redisdata:

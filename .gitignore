@@ -51,7 +51,6 @@ client_secret.json
 Thumbs.db
 
 # Project specific
-ARCHITECTURE.md
 data/
 temp/
 *.db

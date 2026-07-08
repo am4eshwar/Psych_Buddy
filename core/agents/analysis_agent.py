@@ -1,6 +1,6 @@
 """
 Analysis Agent - Handles emotional analysis, wellness planning, and resource coordination
-Uses Gemini 2.0 Flash Thinking for deep analytical reasoning
+Uses Gemini 2.5 Flash for deep analytical reasoning
 """
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List
@@ -28,12 +28,12 @@ class AnalysisAgent:
     """
     
     def __init__(self, memory_manager):
-        """Initialize Analysis Agent with Gemini 2.0 Flash Thinking"""
+        """Initialize Analysis Agent with Gemini 2.5 Flash"""
         logger.info("Initializing Analysis Agent...")
         
         self.memory = memory_manager
         
-        # Configure Gemini 2.0 Flash Thinking for deep analysis
+        # Configure Gemini 2.5 Flash for deep analysis
         genai.configure(api_key=GOOGLE_API_KEY)
         self.model = genai.GenerativeModel(
             model_name=GEMINI_MODEL,
@@ -63,7 +63,7 @@ class AnalysisAgent:
             ]
         )
         
-        logger.info("Analysis Agent initialized with Gemini 2.0 Flash Thinking")
+        logger.info("Analysis Agent initialized with Gemini 2.5 Flash")
     
     async def analyze_initial_input(
         self,

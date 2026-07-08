@@ -7,7 +7,9 @@ python-dotenv>=1.0.0
 apscheduler>=3.10.0
 
 # Memory Architecture
-mem0ai>=0.1.0                        # Memory extraction, deduplication, semantic memory
+mem0ai[nlp]>=0.1.0                   # Memory extraction, deduplication, semantic memory
+fastembed>=0.2.0                     # For BM25 keyword search
+spacy>=3.7.0                         # For NLP features
 litellm>=1.0.0                       # LLM routing for mem0
 qdrant-client>=1.7.0                 # Vector store backend for Mem0
 sentence-transformers>=2.2.0         # Local embeddings generation
