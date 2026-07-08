@@ -1,7 +1,6 @@
 databases:
   - name: psych-postgres
     databaseName: psych_agent
-    user: postgres
     plan: free
 
 services:
