@@ -20,7 +20,7 @@ This system implements a **2-agent collaborative architecture** where specialize
             ▼                         ▼
 ┌───────────────────────┐  ┌─────────────────────────────────┐
 │   ANALYSIS AGENT      │  │    MESSAGING AGENT              │
-│  (Gemini 2.5 Flash)   │  │   (Gemini 2.5 Flash)            │
+│  (Gemini 2.5 Flash)   │  │       (Gemini 2.5 Flash)        │
 ├───────────────────────┤  ├─────────────────────────────────┤
 │ Responsibilities:     │  │ Responsibilities:               │
 │ • Emotional Analysis  │  │ • User Communication            │
@@ -286,7 +286,7 @@ notepad .env
 ```env
 # Google AI
 GOOGLE_API_KEY=your_google_api_key_from_makersuite
-GEMINI_MODEL=gemini-2.0-flash-thinking-exp
+GEMINI_MODEL=gemini-3.1-pro-low
 
 # Database Connections
 POSTGRES_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/psych_agent
@@ -333,8 +333,8 @@ Initializing MCP Servers...
 ✓ Spotify server initialized
 Initializing Multi-Agent Orchestrator...
 ✓ Agent orchestrator initialized
-  → Analysis Agent: Ready (Gemini 2.0 Flash Thinking)
-  → Messaging Agent: Ready (Gemini 2.0 Flash)
+  → Analysis Agent: Ready (Gemini 3.1 Pro (Low))
+  → Messaging Agent: Ready (Gemini 3.1 Pro (Low))
 ✓ Scheduler initialized
 ======================================================================
 Mental Wellness Multi-Agent System Ready!
@@ -348,8 +348,8 @@ Mental Wellness Multi-Agent System Ready!
 ======================================================================
 
 Active Components:
-  • Analysis Agent (Gemini 2.0 Flash Thinking)
-  • Messaging Agent (Gemini 2.0 Flash)
+  • Analysis Agent (Gemini 3.1 Pro (Low))
+  • Messaging Agent (Gemini 3.1 Pro (Low))
   • Telegram Bot
   • Google Calendar: ✓
   • Spotify: ✓
