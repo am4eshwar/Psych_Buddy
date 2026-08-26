@@ -24,7 +24,6 @@ from core.scheduler import WellnessScheduler
 from core.agents import AgentOrchestrator
 from mcp import (
     TelegramMCPServer,
-    GoogleCalendarMCPServer,
     SpotifyMCPServer,
 )
 
@@ -83,13 +82,6 @@ class MentalWellnessApp:
             logger.error(f"✗ Failed to initialize Telegram: {e}")
             raise
 
-        # Google Calendar (optional)
-        self.calendar_server = None
-        try:
-            self.calendar_server = GoogleCalendarMCPServer()
-            logger.info("✓ Google Calendar server initialized")
-        except Exception as e:
-            logger.warning(f"⚠ Google Calendar not available: {e}")
 
         # Spotify (optional)
         self.spotify_server = None
@@ -104,7 +96,6 @@ class MentalWellnessApp:
         self.orchestrator = AgentOrchestrator(
             memory_manager=self.memory,
             telegram_server=self.telegram_server,
-            calendar_server=self.calendar_server,
             spotify_server=self.spotify_server,
         )
         logger.info("✓ Agent orchestrator initialized")
@@ -240,9 +231,7 @@ class MentalWellnessApp:
         logger.info("  • Analysis Agent (Gemini 2.5 Flash)")
         logger.info("  • Messaging Agent (Gemini 2.5 Flash)")
         logger.info("  • Telegram Bot")
-        logger.info(
-            f"  • Google Calendar: {'✓' if self.calendar_server else '✗'}"
-        )
+
         logger.info(f"  • Spotify: {'✓' if self.spotify_server else '✗'}")
         logger.info("  • Memory: Redis + Mem0/Qdrant + PostgreSQL")
         logger.info("  • Task Scheduler")

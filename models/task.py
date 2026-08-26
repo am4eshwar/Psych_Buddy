@@ -58,8 +58,7 @@ class WellnessTask(BaseModel):
     priority: TaskPriority = TaskPriority.MEDIUM
     status: TaskStatus = TaskStatus.PENDING
     
-    # Calendar integration
-    calendar_event_id: Optional[str] = None
+    # Reminder integration
     reminder_sent: bool = False
     
     # Completion tracking

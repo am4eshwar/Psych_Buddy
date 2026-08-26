@@ -90,17 +90,6 @@ def get_mem0_config() -> dict:
         },
     }
 
-# ═══════════════════════════════════════════════════════════════
-# Google Calendar API (Optional)
-# ═══════════════════════════════════════════════════════════════
-GOOGLE_CALENDAR_CREDENTIALS_PATH = os.getenv(
-    "GOOGLE_CALENDAR_CREDENTIALS_PATH",
-    "credentials.json"
-)
-GOOGLE_CALENDAR_TOKEN_PATH = os.getenv(
-    "GOOGLE_CALENDAR_TOKEN_PATH",
-    "token.json"
-)
 
 # ═══════════════════════════════════════════════════════════════
 # Telegram Bot (Only messaging platform)

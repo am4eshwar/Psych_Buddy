@@ -122,8 +122,7 @@ class WellnessTaskDB(Base):
     priority: Mapped[str] = mapped_column(String(16), default="medium")
     status: Mapped[str] = mapped_column(String(16), default="pending", index=True)
 
-    # Calendar integration
-    calendar_event_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    # Reminder integration
     reminder_sent: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Completion tracking

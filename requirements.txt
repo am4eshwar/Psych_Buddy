@@ -20,13 +20,9 @@ sqlalchemy[asyncio]>=2.0.0           # ORM for task/schedule persistence
 asyncpg>=0.29.0                      # Async PostgreSQL driver
 alembic>=1.13.0                      # Database migrations
 
-# Google Cloud (Calendar only)
-google-auth>=2.23.0
-google-auth-oauthlib>=1.1.0
-google-auth-httplib2>=0.1.1
 
 # API Integrations (Optional)
-google-api-python-client>=2.100.0    # Google Calendar
+
 spotipy>=2.23.0                      # Spotify
 
 # Utilities

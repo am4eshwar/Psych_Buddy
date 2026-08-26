@@ -200,55 +200,6 @@ class AnalysisAgent:
             logger.error(f"Error generating wellness plan: {e}")
             raise
     
-    async def schedule_calendar_events(
-        self,
-        session: UserSession,
-        wellness_plan: Dict[str, Any],
-        calendar_server
-    ) -> List[str]:
-        """
-        Coordinate with calendar to schedule wellness activities
-        
-        Returns:
-            List of created event IDs
-        """
-        logger.info(f"Scheduling calendar events for session {session.session_id}")
-        
-        event_ids = []
-        
-        try:
-            tasks = wellness_plan.get('tasks', [])
-            
-            for task in tasks:
-                # Parse task timing
-                day_number = task.get('day', 1)
-                time_slot = task.get('time_slot', '09:00')
-                
-                # Calculate scheduled time
-                scheduled_date = session.start_date + timedelta(days=day_number - 1)
-                hour, minute = map(int, time_slot.split(':'))
-                scheduled_time = scheduled_date.replace(hour=hour, minute=minute)
-                
-                # Create calendar event
-                event_id = calendar_server.create_event(
-                    summary=f"🧘 {task.get('title', 'Wellness Task')}",
-                    description=task.get('description', ''),
-                    start_time=scheduled_time,
-                    duration_minutes=task.get('duration', 30),
-                    reminders=[15, 60]
-                )
-                
-                if event_id:
-                    event_ids.append(event_id)
-                    logger.info(f"Created calendar event: {task.get('title')}")
-            
-            logger.info(f"Scheduled {len(event_ids)} calendar events")
-            return event_ids
-            
-        except Exception as e:
-            logger.error(f"Error scheduling calendar events: {e}")
-            return event_ids
-    
     async def curate_music_playlist(
         self,
         session: UserSession,

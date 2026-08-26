@@ -177,28 +177,6 @@ class MemoryManager:
         except Exception as e:
             logger.error(f"Mem0 add failed: {e}")
 
-    async def consolidate_session(self, user_id: str, messages: List[Dict]):
-        """
-        End-of-session consolidation:
-        Extract facts from conversation, deduplicate, update Qdrant.
-        """
-        if not self._mem0 or not messages:
-            return
-        try:
-            conversation_text = "\n".join(
-                f"{m.get('role', 'user')}: {m.get('content', '')}"
-                for m in messages
-            )
-            await asyncio.to_thread(
-                self._mem0.add,
-                conversation_text,
-                user_id=user_id,
-                metadata={"type": "session_consolidation",
-                          "timestamp": datetime.now(timezone.utc).isoformat()},
-            )
-            logger.info(f"Session consolidated for user {user_id}")
-        except Exception as e:
-            logger.error(f"Mem0 consolidation failed: {e}")
 
     async def get_all_memories(self, user_id: str) -> List[Dict]:
         """Return all stored memories for a user."""
@@ -517,12 +495,6 @@ class MemoryManager:
         })
         await self.save_session_context(user_id, ctx)
 
-        # Periodic consolidation
-        if turn_count > 0 and turn_count % CONSOLIDATION_INTERVAL_TURNS == 0:
-            logger.info(
-                f"Turn {turn_count} — triggering background consolidation for {user_id}"
-            )
-            asyncio.create_task(self.consolidate_session(user_id, messages))
 
     # ================================================================
     # 5. Maintenance
