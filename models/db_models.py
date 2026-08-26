@@ -81,6 +81,7 @@ class UserSessionDB(Base):
     # Status
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     requires_professional_help: Mapped[bool] = mapped_column(Boolean, default=False)
+    session_state: Mapped[str] = mapped_column(String(32), default="stable")
 
     # Relationships
     user = relationship("UserProfileDB", back_populates="sessions")

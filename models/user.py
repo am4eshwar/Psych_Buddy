@@ -52,5 +52,6 @@ class UserSession(BaseModel):
     # Status
     is_active: bool = True
     requires_professional_help: bool = False
-    
+    session_state: str = "stable"
+
 

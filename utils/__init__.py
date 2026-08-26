@@ -1,9 +1,7 @@
 """Initialize utils package"""
-from .coping_strategies import CopingStrategiesDB
-from .prompts import PromptTemplates, CHECK_IN_QUESTIONS
+from .coping_strategies import get_coping_strategies, get_immediate_grounding
 
 __all__ = [
-    'CopingStrategiesDB',
-    'PromptTemplates',
-    'CHECK_IN_QUESTIONS'
+    'get_coping_strategies',
+    'get_immediate_grounding'
 ]

@@ -91,23 +91,23 @@ class MentalWellnessApp:
         except Exception as e:
             logger.warning(f"⚠ Spotify not available: {e}")
 
-        # ── Agent Orchestrator ───────────────────────────────────
-        logger.info("Initializing Multi-Agent Orchestrator...")
-        self.orchestrator = AgentOrchestrator(
-            memory_manager=self.memory,
-            telegram_server=self.telegram_server,
-            spotify_server=self.spotify_server,
-        )
-        logger.info("✓ Agent orchestrator initialized")
-        logger.info("  → Analysis Agent: Ready (Gemini 2.5 Flash)")
-        logger.info("  → Messaging Agent: Ready (Gemini 2.5 Flash)")
-
         # ── Scheduler ────────────────────────────────────────────
         logger.info("Initializing wellness scheduler...")
         self.scheduler = WellnessScheduler(self.memory)
         self.scheduler.register_check_in_callback("default", self.handle_check_in)
         self.scheduler.register_task_callback("default", self.handle_task_reminder)
         logger.info("✓ Scheduler initialized")
+
+        # ── Agent Orchestrator ───────────────────────────────────
+        logger.info("Initializing Multi-Agent Orchestrator...")
+        self.orchestrator = AgentOrchestrator(
+            memory_manager=self.memory,
+            telegram_server=self.telegram_server,
+            spotify_server=self.spotify_server,
+            scheduler=self.scheduler
+        )
+        logger.info("✓ Agent orchestrator initialized")
+        logger.info("  → ReAct Engine: Ready (Gemini 2.5 Flash)")
 
         # Register Telegram message handler
         self.telegram_server.register_message_handler(self.handle_user_message)
@@ -146,25 +146,8 @@ class MentalWellnessApp:
             await self.memory.save_turn(user_id, "user", message, session_id)
 
             # ── 3. Route to orchestrator ─────────────────────────
-            if not active_session:
-                logger.info("→ New user detected — Starting multi-agent onboarding")
-                result = await self.orchestrator.handle_new_user_input(
-                    user_id, message
-                )
-
-                # Schedule check-ins for new session
-                if not result.get("is_crisis"):
-                    self.scheduler.schedule_daily_check_ins(result["session"])
-                    logger.info(
-                        f"✓ Scheduled {PROGRAM_DURATION_DAYS * 4} check-ins"
-                    )
-
-                response = result["message"]
-            else:
-                logger.info("→ Existing user — Processing response")
-                response = await self.orchestrator.handle_user_response(
-                    user_id, message
-                )
+            logger.info("→ Routing to ReAct Orchestrator")
+            response = await self.orchestrator.run_react_loop(user_id, message)
 
             # ── 4. Save the assistant turn to Redis ──────────────
             await self.memory.save_turn(
@@ -189,9 +172,15 @@ class MentalWellnessApp:
             f"Day {day_number}, {time_of_day}"
         )
         try:
-            await self.orchestrator.handle_check_in(
-                session_id, time_of_day, day_number
-            )
+            from core.database import async_session_factory
+            from models import UserSessionDB
+            async with async_session_factory() as session:
+                db_obj = await session.get(UserSessionDB, session_id)
+                if db_obj:
+                    user_id = db_obj.user_id
+                    message = f"It is time for the user's scheduled {time_of_day} check-in for day {day_number}."
+                    response = await self.orchestrator.run_react_loop(user_id, message, context_type="check_in")
+                    await self.telegram_server.send_message(user_id, response)
             logger.info("✓ Check-in completed successfully")
         except Exception as e:
             logger.error(f"✗ Error in check-in: {e}", exc_info=True)
@@ -200,7 +189,15 @@ class MentalWellnessApp:
         """Handle task reminder — delegates to orchestrator."""
         logger.info(f"📋 Task reminder triggered: {task_id}")
         try:
-            await self.orchestrator.handle_task_reminder(task_id, session_id)
+            from core.database import async_session_factory
+            from models import UserSessionDB
+            async with async_session_factory() as session:
+                db_obj = await session.get(UserSessionDB, session_id)
+                if db_obj:
+                    user_id = db_obj.user_id
+                    message = f"It is time to remind the user about wellness task {task_id}."
+                    response = await self.orchestrator.run_react_loop(user_id, message, context_type="task_reminder")
+                    await self.telegram_server.send_message(user_id, response)
             logger.info("✓ Task reminder sent successfully")
         except Exception as e:
             logger.error(f"✗ Error sending task reminder: {e}", exc_info=True)
