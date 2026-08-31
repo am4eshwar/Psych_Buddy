@@ -1,6 +1,6 @@
 """
-Psych Buddy - Multi-Agent System
-Orchestrates Analysis Agent and Messaging Agent
+Psych Buddy - ReAct Agent System
+Core ReAct Engine coordinating tools and memory
 Telegram-only communication platform
 
 Memory Architecture:
@@ -45,19 +45,18 @@ logger.add(
 
 class MentalWellnessApp:
     """
-    Psych Buddy Multi-Agent Application
+    Psych Buddy ReAct Agent Application
 
     Architecture:
-    - Analysis Agent: Emotional analysis, wellness planning, resource coordination
-    - Messaging Agent: Communication, check-ins, crisis detection
-    - Orchestrator: Coordinates agent collaboration
+    - ReAct Orchestrator: Central engine coordinating tools, memory, and interactions
+    - Tools: Memory, Wellness, Therapeutic integrations
     - MemoryManager: Redis + Mem0/Qdrant + PostgreSQL
     """
 
     def __init__(self):
-        """Initialize the Psych Buddy Multi-Agent Application"""
+        """Initialize the Psych Buddy ReAct Agent Application"""
         logger.info("=" * 70)
-        logger.info("Initializing Psych Buddy Multi-Agent System")
+        logger.info("Initializing Psych Buddy ReAct Agent System")
         logger.info("=" * 70)
 
         # Validate configuration
@@ -99,7 +98,7 @@ class MentalWellnessApp:
         logger.info("✓ Scheduler initialized")
 
         # ── Agent Orchestrator ───────────────────────────────────
-        logger.info("Initializing Multi-Agent Orchestrator...")
+        logger.info("Initializing ReAct Agent Orchestrator...")
         self.orchestrator = AgentOrchestrator(
             memory_manager=self.memory,
             telegram_server=self.telegram_server,
@@ -113,7 +112,7 @@ class MentalWellnessApp:
         self.telegram_server.register_message_handler(self.handle_user_message)
 
         logger.info("=" * 70)
-        logger.info("Psych Buddy Multi-Agent System Ready!")
+        logger.info("Psych Buddy ReAct Agent System Ready!")
         logger.info("=" * 70)
 
     # ================================================================
@@ -208,7 +207,7 @@ class MentalWellnessApp:
     async def start(self):
         """Start the multi-agent application (async)."""
         logger.info("=" * 70)
-        logger.info("🚀 Starting Psych Buddy Multi-Agent System")
+        logger.info("🚀 Starting Psych Buddy ReAct Agent System")
         logger.info("=" * 70)
 
         # ── Initialize memory (Redis + Mem0/Qdrant + PostgreSQL) ─
@@ -225,8 +224,7 @@ class MentalWellnessApp:
         logger.info("=" * 70)
         logger.info("")
         logger.info("Active Components:")
-        logger.info("  • Analysis Agent (Gemini 2.5 Flash)")
-        logger.info("  • Messaging Agent (Gemini 2.5 Flash)")
+        logger.info("  • ReAct Agent Orchestrator (Gemini 2.5 Flash)")
         logger.info("  • Telegram Bot")
 
         logger.info(f"  • Spotify: {'✓' if self.spotify_server else '✗'}")
@@ -244,7 +242,7 @@ class MentalWellnessApp:
     async def shutdown(self):
         """Gracefully shutdown all components and connections."""
         logger.info("=" * 70)
-        logger.info("Shutting down Psych Buddy Multi-Agent System")
+        logger.info("Shutting down Psych Buddy ReAct Agent System")
         logger.info("=" * 70)
 
         try:
@@ -295,12 +293,12 @@ async def async_main():
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Psych Buddy Multi-Agent System",
+        description="Psych Buddy ReAct Agent System",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
-Multi-Agent Architecture:
-  • Analysis Agent: Emotional analysis, wellness planning, resource coordination
-  • Messaging Agent: Communication, check-ins, crisis detection
+ReAct Agent Architecture:
+  • ReAct Orchestrator: Central engine coordinating tools, memory, and interactions
+  • Tools: Memory, Wellness, Therapeutic integrations
 
 Communication: Telegram only
 Memory: Redis (session) + Mem0/Qdrant (semantic) + PostgreSQL (tasks)
