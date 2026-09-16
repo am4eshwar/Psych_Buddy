@@ -122,13 +122,47 @@ class AgentOrchestrator:
                 )
                 
                 # 4. Start Chat (Empty history, rely on injected context)
-                chat = model.start_chat(enable_automatic_function_calling=True)
+                # DO NOT use enable_automatic_function_calling=True because tools are async
+                chat = model.start_chat()
                 
-                # 5. Execute ReAct Loop (Using async to support async tools if possible)
+                # 5. Execute ReAct Loop manually
                 logger.debug(f"Sending message to Gemini for user {user_id}: {final_message[:50]}...")
-                
-                # google-generativeai automatically handles the tool calling loop
                 response = await chat.send_message_async(final_message)
+                
+                # Manual tool calling loop
+                max_iterations = 10
+                for _ in range(max_iterations):
+                    if not response.parts or not response.parts[0].function_call:
+                        break
+                        
+                    part = response.parts[0]
+                    func_call = part.function_call
+                    func_name = func_call.name
+                    logger.info(f"Model calling tool: {func_name}")
+                    
+                    # Find tool
+                    func = next((t for t in all_tools if t.__name__ == func_name), None)
+                    if func:
+                        try:
+                            # Convert protobuf MapComposite to dict
+                            args = {k: v for k, v in func_call.args.items()}
+                            # Execute the async tool
+                            result = await func(**args)
+                        except Exception as e:
+                            logger.error(f"Error executing tool {func_name}: {e}")
+                            result = f"Error: {str(e)}"
+                    else:
+                        result = "Error: Function not found"
+                        
+                    # Format response
+                    func_response = [{
+                        "function_response": {
+                            "name": func_name,
+                            "response": {"result": result}
+                        }
+                    }]
+                    # Send tool result back
+                    response = await chat.send_message_async(func_response)
                 
                 logger.info(f"ReAct loop completed for user {user_id}")
                 return response.text
