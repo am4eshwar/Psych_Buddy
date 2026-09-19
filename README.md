@@ -1,8 +1,32 @@
 # Psych Buddy: Autonomous Psychological Support Agent
 
-Psych Buddy operates as an autonomous, evidence-based psychological support system built upon a ReAct (Reasoning and Acting) cognitive architecture. Engineered to deliver continuous mental wellness interventions through the Telegram messaging protocol, the application functions as a proactive companion. It actively monitors user psychological states, formulates tailored coping mechanisms, and oversees the completion of therapeutic exercises.
+Psych Buddy is a ReAct (Reasoning and Acting) autonomous agent that operates as an evidence-based psychological support system. Engineered to deliver continuous mental wellness interventions through the Telegram messaging protocol, the application functions as a proactive companion. It actively monitors user psychological states, formulates tailored coping mechanisms, and oversees the completion of therapeutic exercises.
 
 The core reasoning engine leverages Google Gemini 3.6 Flash. To ensure interaction continuity and contextual awareness, the system implements a sophisticated tripartite memory architecture. This infrastructure allows the agent to synthesize long-term historical context, recognize behavioral patterns, and prevent repetitive information gathering.
+
+## User Guide: Using Psych Buddy via Telegram
+
+Users can interact with Psych Buddy directly through the Telegram messaging application. Here is what you can expect while using the agent:
+
+*   **Continuous Psychological Support**: You can send messages at any time to discuss your thoughts, stressors, or daily challenges. The agent acts as a proactive companion to help you navigate your mental wellness.
+*   **Tailored Coping Mechanisms**: Based on your conversations, the agent formulates and suggests specific strategies, such as breathing exercises or grounding techniques, customized to your current emotional state.
+*   **Automated Check-ins**: Psych Buddy actively monitors your psychological state and will reach out at scheduled times to see how you are doing.
+*   **Therapeutic Exercises**: The agent oversees the completion of wellness tasks and routines, helping you stay consistent with your mental health goals.
+*   **Long-term Memory**: You do not need to repeat yourself. The system synthesizes your historical context, remembers significant life events, and recognizes behavioral patterns over time.
+*   **Spotify Curation**: The agent can curate therapeutic and relaxing Spotify playlists based on your mood to assist with emotional regulation.
+
+## Running Psych Buddy Locally
+
+You can run Psych Buddy on your own system by configuring the relevant parameters. Follow these clear instructions to deploy the agent locally:
+
+1.  **Clone the Repository**: Download the project files to your local machine.
+2.  **Configure Environment Variables**: Create a file named `.env` in the root directory. You must change the following mandatory parameters:
+    *   `GOOGLE_API_KEY`: Your Google Gemini API key.
+    *   `TELEGRAM_BOT_TOKEN`: The token provided by BotFather on Telegram.
+    *   `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`: Your Spotify Developer credentials (optional, for playlist curation).
+3.  **Adjust Application Settings**: Inside the `.env` file, you can also modify parameters like `CHECK_IN_TIMES` to set when the agent should proactively contact you, or `PROGRAM_DURATION_DAYS` to set the length of a wellness program.
+4.  **Start the Services**: The project uses Docker Compose to manage its dependencies (PostgreSQL, Redis, and Qdrant). Open your terminal and run the command `docker compose up -d` to build and start the agent along with all required databases.
+5.  **Interact with the Agent**: Once the containers are running, open Telegram and send a message to your bot to begin the interaction.
 
 ## System Architecture and Control Flow
 
