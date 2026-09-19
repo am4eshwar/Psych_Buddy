@@ -55,3 +55,4 @@ data/
 temp/
 *.db
 *.sqlite
+scratch_gemini.py
