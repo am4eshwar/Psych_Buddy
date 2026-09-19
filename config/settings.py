@@ -15,7 +15,7 @@ LOGS_DIR.mkdir(exist_ok=True)
 
 # Google AI Configuration
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 
 # ═══════════════════════════════════════════════════════════════
 # Memory Architecture Configuration
