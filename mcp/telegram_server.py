@@ -161,6 +161,12 @@ Just send me a message describing your current emotional state and what you're g
     
     async def stop(self):
         """Stop the bot"""
-        if self.app.running:
-            await self.app.stop()
+        try:
+            if hasattr(self.app, "updater") and self.app.updater and self.app.updater.running:
+                await self.app.updater.stop()
+            if self.app.running:
+                await self.app.stop()
+            await self.app.shutdown()
             logger.info("Telegram bot stopped")
+        except Exception as e:
+            logger.warning(f"Telegram bot stop warning: {e}")

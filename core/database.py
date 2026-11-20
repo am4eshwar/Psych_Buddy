@@ -67,5 +67,8 @@ async def init_db():
 
 async def close_db():
     """Dispose of the connection pool on shutdown."""
-    await engine.dispose()
-    logger.info("✓ PostgreSQL connection pool closed")
+    try:
+        await engine.dispose()
+        logger.info("PostgreSQL connection pool closed")
+    except Exception as e:
+        logger.warning(f"PostgreSQL connection pool close warning: {e}")

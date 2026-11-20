@@ -5,13 +5,13 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
 # Base directories
 BASE_DIR = Path(__file__).parent.parent
 LOGS_DIR = BASE_DIR / "logs"
 LOGS_DIR.mkdir(exist_ok=True)
+
+# Load environment variables
+load_dotenv(BASE_DIR / ".env", override=True)
 
 # Google AI Configuration
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")

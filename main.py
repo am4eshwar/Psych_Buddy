@@ -11,6 +11,7 @@ Memory Architecture:
 import sys
 import asyncio
 import argparse
+import signal
 from loguru import logger
 
 from config import (
@@ -282,12 +283,30 @@ async def async_main():
         while True:
             await asyncio.sleep(1)
 
-    except KeyboardInterrupt:
-        logger.info("\n⚠ Keyboard interrupt received")
+    except (KeyboardInterrupt, asyncio.CancelledError):
+        logger.info("Shutdown initiated by user")
     except Exception as e:
-        logger.error(f"✗ Critical application error: {e}", exc_info=True)
+        logger.error(f"Critical application error: {e}", exc_info=True)
     finally:
-        await app.shutdown()
+        current_task = asyncio.current_task()
+        if current_task and hasattr(current_task, "uncancel"):
+            current_task.uncancel()
+
+        # Prevent duplicate SIGINT during cleanup
+        original_sigint = None
+        try:
+            original_sigint = signal.signal(signal.SIGINT, signal.SIG_IGN)
+        except Exception:
+            pass
+
+        try:
+            await app.shutdown()
+        finally:
+            if original_sigint is not None:
+                try:
+                    signal.signal(signal.SIGINT, original_sigint)
+                except Exception:
+                    pass
 
 
 def main():
