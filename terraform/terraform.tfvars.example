@@ -1,0 +1,15 @@
+# AWS Region
+aws_region = "us-east-1"
+
+# EC2 instance type (t3.small has 2GB RAM; minimum recommended)
+instance_type = "t3.small"
+
+# AWS Key Pair name registered in your AWS account
+key_name = "your-aws-keypair-name"
+
+# Local path to your private key file (.pem) on your Windows machine
+# Note: Use forward slashes in path (e.g., "C:/Users/PC-ACER/.ssh/my-key.pem")
+private_key_path = "C:/path/to/your-key.pem"
+
+# Restrict SSH access to your public IP (recommended: "x.x.x.x/32")
+allowed_ssh_cidr = "0.0.0.0/0"
